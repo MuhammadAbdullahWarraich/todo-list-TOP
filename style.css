@@ -60,3 +60,22 @@ h6 {
 #__next {
   isolation: isolate;
 }
+/* ----- css reset ends ----- */
+* {
+  margin: 0px;
+  padding: 0px;
+}
+#lists-container > div {
+  width: 300px;
+  outline: 1px solid black;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+.hide {
+  display: none;
+}

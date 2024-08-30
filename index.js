@@ -8,5 +8,15 @@ document.querySelector('form').addEventListener('submit', (e) => {
         <p>Priority: ${edottarget[3].value}</p>
     `;
     document.querySelector('ul').appendChild(item);
+    toggleForm();
     e.preventDefault();
 });
+document.querySelector('.form-toggle').addEventListener('click', toggleForm);
+function toggleForm() {
+    const form = document.querySelector('form');
+    if (form.classList.contains('hide')) {
+        form.classList.remove('hide');
+    } else {
+        form.classList.add('hide');
+    }
+}
