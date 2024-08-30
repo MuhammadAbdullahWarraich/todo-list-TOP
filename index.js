@@ -9,6 +9,7 @@ document.querySelector('form').addEventListener('submit', (e) => {
     `;
     document.querySelector('ul').appendChild(item);
     toggleForm();
+    e.target.reset();
     e.preventDefault();
 });
 document.querySelector('.form-toggle').addEventListener('click', toggleForm);
@@ -18,8 +19,12 @@ function toggleForm() {
     if (form.classList.contains('hide')) {
         form.classList.remove('hide');
         img.src = './media/minus-circle-outline.svg';
+        img.alt = 'close task adder form';
+        img.setAttribute('aria-label', 'click this button to close task adder form');
     } else {
         form.classList.add('hide');
         img.src = './media/plus-circle-outline.svg';
+        img.alt = "open task adder form";
+        img.setAttribute('aria-label', 'click this button to open task adder form');
     }
 }
