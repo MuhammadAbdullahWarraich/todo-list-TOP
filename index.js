@@ -14,9 +14,12 @@ document.querySelector('form').addEventListener('submit', (e) => {
 document.querySelector('.form-toggle').addEventListener('click', toggleForm);
 function toggleForm() {
     const form = document.querySelector('form');
+    const img = document.querySelector('button.form-toggle > img');
     if (form.classList.contains('hide')) {
         form.classList.remove('hide');
+        img.src = './media/minus-circle-outline.svg';
     } else {
         form.classList.add('hide');
+        img.src = './media/plus-circle-outline.svg';
     }
 }
