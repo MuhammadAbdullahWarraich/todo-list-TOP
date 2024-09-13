@@ -84,3 +84,12 @@ form {
 .hide {
   display: none;
 }
+.hidden {
+  display: none;
+}
+.state-0 > p {
+  display: none;
+}
+.state-1 > p {
+  display: block;
+}
