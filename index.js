@@ -1,70 +1,73 @@
-document.querySelector('form').addEventListener('submit', (e) => {
-    const item = document.createElement('li');
-    const edottarget = e.target;
-    item.innerHTML = `
-        <h3>${edottarget[0].value}</h3>
-        <p>${edottarget[1].value}</p>
-        <p>Due: ${edottarget[2].value}</p>
-        <p>Priority: ${edottarget[3].value}</p>
-    `;
-    item.classList.add('state-0');
-    document.querySelector('ul').appendChild(item);
-    item.addEventListener('click', (event) => {
-        const et = event.target;
-        const etp = et.parentElement;
-        if (etp.classList.contains('state-0')) {
-            etp.classList.remove('state-0');
-            etp.classList.add('state-1');
-        } else if (etp.classList.contains('state-1')) {
-            etp.classList.remove('state-1');
-            etp.classList.add('state-2');
-            for (let i = 0; i < etp.children.length; i++) {
-                const val = etp.children[i].innerHTML;
-                let input = "";
-                if (i == 2) {
-                    input = `<input type="date" value="${val.slice(5)}">`;
-                }
-                // } else if (i == 3) {
-                //     input = `<input type="text" value = "${val.slice(10)}"`;
-                // } 
-                else {
-                    input = `<input type="text" value="${val}">`;
-                }
-                etp.children[i].innerHTML = input;
-            }
-        } else if (etp.classList.contains('state-2')) {
-            etp.classList.remove('state-2');
-            etp.classList.add('state-0');
-            for (let i = 0; i < etp.children.length; i++) {
-                console.log(etp.children[i].children[0].value);
-                let input = etp.children[i].children[0].value;
-                if (i == 2) {
-                    input = "Due: " + input;
-                }
-                // } else if (i == 3) {
-                //     input = "Priority: " + input;
-                // }
-                etp.children[i].innerHTML = input;
-            }
-        }
-    });
-    toggleForm();
-    e.target.reset();
-    e.preventDefault();
-});
-document.querySelector('.form-toggle').addEventListener('click', toggleForm);
-function toggleForm() {
-    const form = document.querySelector('form');
-    const img = document.querySelector('button.form-toggle > img');
-    if (form.classList.contains('hide')) {
-        form.classList.remove('hide');
-        img.src = './media/minus-circle-outline.svg';
-        img.alt = 'close task adder form';
-        img.setAttribute('aria-label', 'click this button to close task adder form');
-    } else {
-        form.classList.add('hide');
-        img.src = './media/plus-circle-outline.svg';
-        img.alt = "open task adder form";
-        img.setAttribute('aria-label', 'click this button to open task adder form');
+// -------------------create data structures------------------------
+let lists;
+class TodoList {
+    constructor(title) {
+        this.title = title;
+        this.items = [];
     }
 }
+class TodoItem {
+    constructor(title, desc, due, priority, isPending = true) {
+        this.title = title;
+        this.desc = desc;
+        this.due = due;
+        this.priority = priority;
+        this.isPending = isPending;
+    }
+}
+// -------------------read from local storage----------------------
+(function() {
+    function storageAvailable(type) {
+        let storage;
+        try {
+          storage = window[type];
+          const x = "__storage_test__";
+          storage.setItem(x, x);
+          storage.removeItem(x);
+          return true;
+        } catch (e) {
+          return (
+            e instanceof DOMException &&
+            e.name === "QuotaExceededError" &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            storage &&
+            storage.length !== 0
+          );
+        }
+    }
+    if (storageAvailable("localStorage")) {
+      // Yippee! We can use localStorage awesomeness
+        lists = localStorage.getItem("TodoListTOP");
+        if (null === lists) {
+          lists = [];
+          lists.push(new TodoItem("Default List"));
+          // localStorage.setItem("TodoListTOP", lists);
+        }
+    } else {
+      // Too bad, no localStorage for us
+        alert("Local storage is not supported by this browser, so your data will be lost once you end this browser session!");
+    }
+})();
+// -------------------make GUI visible and add asynchronous event listeners(which will be the drivers of this program)----------------------------
+(function() {
+    // event listener for list adder component:
+    /*
+    -> toggle form
+    -> create list (override form submit event listener)
+    */
+    // event listeners for each list:
+    /* 
+    -> delete list
+    -> rename list
+    -> toggle task adder form
+    -> create todo item (overrride form submit event listener)
+    */
+   // event listeners for each todo item
+   /*
+   -> delete todo item
+   -> edit todo item
+   -> mark as completed / pending
+   -> show / hide details
+   -> *move to another list (optional)
+   */
+})();

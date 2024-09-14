@@ -70,6 +70,9 @@ h6 {
   width: 300px;
   outline: 1px solid black;
 }
+.add-new-task > img {
+  width: 300px;
+}
 .form-toggle {
   display: flex;
   justify-content: center;
@@ -92,4 +95,8 @@ form {
 }
 .state-1 > p {
   display: block;
+}
+h2:has(div.delete) {
+  display: flex;
+  justify-content: space-between;
 }
