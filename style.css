@@ -73,6 +73,11 @@ h6 {
 .add-new-task > img {
   width: 300px;
 }
+#list-adder-display-toggle {
+  width: 300px;
+  display: flex;
+  justify-content: center;
+}
 .form-toggle {
   display: flex;
   justify-content: center;
@@ -96,7 +101,21 @@ form {
 .state-1 > p {
   display: block;
 }
+.list-adder,
+.task-adder {
+  display: none;
+}
+.show {
+  display: block;
+}
 h2:has(div.delete) {
   display: flex;
   justify-content: space-between;
+}
+.list > li {
+  display: flex;
+  outline: 1px solid black;
+}
+.list > li > div:has(> .item-data) {
+  flex: 1;
 }
