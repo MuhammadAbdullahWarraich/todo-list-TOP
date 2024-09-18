@@ -4,7 +4,47 @@ FUNCTIONS
   create refers to complete creation of a working component
   make refers to node generation using markup only
 */
-// -------------------create data structures(done)------------------------
+/*
+CODE FORMAT
+
+The code in this file is organized in the following way:
+
+
+1. create data structures
+2. read from local storage
+3. make GUI visible and add asynchronous event listeners(which will be the drivers of this program)
+
+  a. create HTML for list adder component
+
+  b. add the following event listeners for list adder component:
+    => toggle form
+    => create list (override form submit event listener) 
+
+  c. make a createList function
+    => create HTML for list
+    => create an object for the list and add it to the relevant data structure
+    => add the following event listeners for the list
+      -> delete list
+      -> toggle task adder form
+      -> create todo item (overrride form submit event listener)
+
+  d. make a createTodoItem function
+    => create HTML for todoitem
+    => create an object for the todoitem and add it to the relevant data structure
+    => add the following event listeners for the todo item
+      -> delete todo item
+      -> edit todo item
+      -> mark as completed / pending
+      -> show / hide details
+
+*/
+
+
+
+
+
+
+// 1. create data structures
 let lists = [];
 class TodoList {
 	constructor(title) {
@@ -17,38 +57,42 @@ class TodoItem {
 		this.arr = [title, desc, due, priority, isPending];
 	}
 }
-// -------------------read from local storage(done)----------------------
-// (function() {
-// 	function isStorageAvailable(type) {
-// 		let storage;
-// 		try {
-// 			storage = window[type];
-// 			const x = "__storage_test__";
-// 			storage.setItem(x, x);
-// 			storage.removeItem(x);
-// 			return true;
-// 		} catch (e) {
-// 			return (
-// 				e instanceof DOMException &&
-// 				e.name === "QuotaExceededError" &&
-// 				// acknowledge QuotaExceededError only if there's something already stored
-// 				storage &&
-// 				storage.length !== 0
-// 			);
-// 		}
-// 	}
-// 	if (isStorageAvailable("localStorage")) {
-// 		// Yippee! We can use localStorage awesomeness
-// 		lists = JSON.parse(localStorage.getItem("TodoListTOP"));
-// 		if (null === lists) {
-// 			lists = [];
-// 		}
-// 	} else {
-// 		// Too bad, no localStorage for us
-// 		alert("Local storage is not supported by this browser, so your data will be lost once you end this browser session!");
-// 	}
-// })();
-// -------------------make GUI visible and add asynchronous event listeners(which will be the drivers of this program)----------------------------
+// 2. read from local storage
+(function() {
+	function isStorageAvailable(type) {
+		let storage;
+		try {
+			storage = window[type];
+			const x = "__storage_test__";
+			storage.setItem(x, x);
+			storage.removeItem(x);
+			return true;
+		} catch (e) {
+			return (
+				e instanceof DOMException &&
+				e.name === "QuotaExceededError" &&
+				// acknowledge QuotaExceededError only if there's something already stored
+				storage &&
+				storage.length !== 0
+			);
+		}
+	}
+	if (isStorageAvailable("localStorage")) {
+		// Yippee! We can use localStorage awesomeness
+    const retVal = localStorage.getItem("TodoListTOP");
+    if (retVal !== null) {
+      lists = JSON.parse(localStorage.getItem("TodoListTOP"));
+    } else {
+      lists = [];
+    }
+	} else {
+		// Too bad, no localStorage for us
+		alert("Local storage is not supported by this browser, so your data will be lost once you end this browser session!");
+	}
+  console.log("reading complete!");
+  console.log(lists);
+})();
+// 3. make GUI visible and add asynchronous event listeners(which will be the drivers of this program)
 const listsContainer = document.querySelector('#lists-container');
 (function() {
 	function component(tag, content) {
@@ -67,38 +111,32 @@ const listsContainer = document.querySelector('#lists-container');
         img.setAttribute('aria-label', `click this button to close ${formName} form`);
     }
   }
-	// create HTML for list adder component
 	function makeListAdderForm(form, toggleButtonId) {
 		return component('div', `
-	<form id=${form}>
-	    <input type="text" name="listname" />
-	    <button>Create</button>
-	</form>
-	<button id="${toggleButtonId}">
+      <button id="${toggleButtonId}">
 	    <img 
 		src="./media/plus-circle-outline.svg" 
 		height="30" 
 		aria-label="click this button to open list adder form"
 	    />
 	</button>
+	<form id=${form}>
+	    <input type="text" name="listname" />
+	    <button>Create</button>
+	</form>
     `);
 	}
-    // event listeners for list adder component:
-    /* 
-      -> toggle form(done)
-      -> create list (override form submit event listener) 
-    */
   (function() {
+  // a. create HTML for list adder component
     const formId = 'list-adder-form';
     const toggleButtonId = 'list-adder-display-toggle';
     const listAdderHTML = makeListAdderForm(formId, toggleButtonId);
     const listAdderId = "list-adder-container";
     listAdderHTML.id = listAdderId;
-    listAdderHTML.classList.add('list-adder');
     listsContainer.appendChild(listAdderHTML);//!!!
-    // Event Listeners
-    // toggle form(done)
-    // create list(done)
+  // b. add the following event listeners for list adder component:
+  //  => toggle form
+  //  => create list (override form submit event listener)
       const DOMref = document.querySelector(`#${listAdderId}`);
       const img = DOMref.querySelector('img');
       DOMref.querySelector(`#${toggleButtonId}`).addEventListener('click', (e) => {
@@ -141,7 +179,14 @@ const listsContainer = document.querySelector('#lists-container');
         <ul class="list completed"></ul>
     `);
   }
-  function createList(listTitle) {
+  // c. make a createList function
+  //   => create HTML for list
+  //   => create an object for the list and add it to the relevant data structure
+  //   => add the following event listeners for the list
+  //     -> delete list
+  //     -> toggle task adder form
+  //     -> create todo item (overrride form submit event listener)
+  function createList(listTitle, listObj = null) {
     const listHTML = makeList(listTitle);
     let listId = `${listTitle.replace(/\s/g, '-')}-wrapper`;
     listId = listId.replace(/[^A-Za-z\-]/g, "");
@@ -150,16 +195,10 @@ const listsContainer = document.querySelector('#lists-container');
     listsContainer.appendChild(listHTML);
 
     const DOMref = document.querySelector(`#${listId}`);
-    const listObj = new TodoList(listTitle);
-    lists.push(listObj);
-    //localStorage.setItem("TodoListTOP", JSON.stringify(lists));
-    // event listeners for each list:
-	/* 
-    -> delete list(done)
-    -> rename list(not now)
-    -> toggle task adder form(done)
-    -> create todo item (overrride form submit event listener)(done)
-    */
+    if (null === listObj) {
+      listObj = new TodoList(listTitle);
+      lists.push(listObj);
+    }
     DOMref.querySelector('h2 > div.delete').addEventListener('click', () => {
       let index = -1;
       Array.from(DOMref.classList).forEach((c) => {
@@ -173,7 +212,7 @@ const listsContainer = document.querySelector('#lists-container');
       listsContainer.removeChild(DOMref);
       
       for (let i = index; i < listsContainer.children.length; i++) {
-        const regex = /^index-\d+$/; // Define the regex pattern
+        const regex = /^index-\d+$/;
         Array.from(listsContainer.children[i].classList).forEach((className) => {
           if (regex.test(className)) {
             listsContainer.children[i].classList.remove(className);
@@ -196,7 +235,6 @@ const listsContainer = document.querySelector('#lists-container');
         const priority = edotTarget[3].value;
         
         const newItem = createTodoItem(title, desc, dueDate, priority, listObj);
-        console.log(newItem);
 
         edotTarget.reset();
         toggleSVGandForm(edotTarget, img, "task adder");
@@ -238,9 +276,11 @@ const listsContainer = document.querySelector('#lists-container');
 
     return li;
   }
-	function createTodoItem(title, desc, dueDate, priority, listObj) {
-    const itemObj = new TodoItem(title, desc, dueDate, priority, true);
-    listObj.items.push(itemObj);
+	function createTodoItem(title, desc, dueDate, priority, listObj, isPending = true, itemObj = null) {
+    if (itemObj === null) {
+      itemObj = new TodoItem(title, desc, dueDate, priority, true);
+      listObj.items.push(itemObj);
+    }
     const objIndex = listObj.items.length - 1;
     const li = makeTodoItem(title, desc, dueDate, priority);
     
@@ -254,19 +294,11 @@ const listsContainer = document.querySelector('#lists-container');
 
     const DFA = DOMref.querySelector('div:has(> .item-data)')
     DFA.classList.add('state-0');
- // event listeners for each todo item
-	/*
-   -> delete todo item
-   -> edit todo item
-   -> mark as completed / pending
-   -> show / hide details
-   -> *move to another list (optional)
-   */
+
     DFA.addEventListener('click', (event) => {
       const et = event.target;
       const etp = et.parentElement;
-      console.log(et);
-      console.log(etp);
+      
       if (etp.classList.contains('state-0')) {
           etp.classList.remove('state-0');
           etp.classList.add('state-1');
@@ -281,11 +313,7 @@ const listsContainer = document.querySelector('#lists-container');
               let input = "";
               if (i == 2) {
                     input = `<input class="item-data" type="date" value="${val.slice(5)}">`;
-                }
-                // } else if (i == 3) {
-                //     input = `<input class="item-data" type="text" value = "${val.slice(10)}"`;
-                // } 
-                else {
+                } else {
                     input = `<input class="item-data" type="text" value="${val}">`;
                 }
                 etp.children[i].innerHTML = input;
@@ -295,20 +323,16 @@ const listsContainer = document.querySelector('#lists-container');
             etp.classList.add('state-0');
             for (let i = 0; i < etp.children.length; i++) {
                   if (!etp.children[i].classList.contains("item-data")) continue;
-                  console.log(etp.children[i].children[0].value);
                   let input = etp.children[i].children[0].value;
                   itemObj.arr[i] = input;
                   if (i == 2) {
                       input = "Due: " + input;
                   }
-                  // } else if (i == 3) {
-                  //     input = "Priority: " + input;
-                  // }
                   etp.children[i].innerHTML = input;
               }
           }
       });
-      DOMref.querySelector('input.mark-complete').onclick = function() {
+      function markCompleteOrPending() {
         const list = DOMref.parentElement
         DOMref.querySelector('input.mark-complete').checked = false;
         list.removeChild(DOMref)
@@ -321,20 +345,36 @@ const listsContainer = document.querySelector('#lists-container');
             list.parentElement.querySelector('.list').appendChild(DOMref);
             itemObj.arr[itemObj.arr.length - 1] = true;
         }
-    };
-  
+      }
+      DOMref.querySelector('input.mark-complete').onclick = markCompleteOrPending;
+      
+      if (isPending === false) {
+        markCompleteOrPending();
+      }
     DOMref.querySelector('div.delete').addEventListener('click', () => {
         DOMref.parentElement.removeChild(DOMref);
         listObj.items = listObj.items.filter(arrVal => arrVal !== itemObj);
     })
   }
-  if (lists.length === 0) createList("Defaults Lists");
+  if (lists.length === 0) createList("Default List");
   else {
-    for (let i = 1; i < lists.length; i++) {
-      createList(lists[i].title);
+    for (let i = 0; i < lists.length; i++) {
+      createList(lists[i].title, lists[i]);
+      for (let j = 0; j < lists[i].items.length; j++) {
+        const ij = lists[i].items[j];
+        createTodoItem(
+          ij.arr[0], 
+          ij.arr[1], 
+          ij.arr[2], 
+          ij.arr[3], 
+          lists[i], 
+          ij.arr[4],
+          ij
+        );
+      }
     }
   }  
 })();
-// window.addEventListener("beforeunload", function() {
-//   localStorage.setItem("TodoListTOP", JSON.stringify(lists));
-// });
+window.addEventListener("beforeunload", function() {
+  localStorage.setItem("TodoListTOP", JSON.stringify(lists));
+});
